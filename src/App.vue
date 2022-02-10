@@ -2,7 +2,7 @@
   <v-app>
     <c-navigation :links="links"/>    
 
-    <v-content>
+    <v-content background="primary">
       <c-login/>
     </v-content>
 
@@ -13,7 +13,7 @@
 
 <script>
 
-import CLogin from "@/components/Login.vue"
+import CLogin from "@/views/Login.vue"
 import CNavigation from "@/components/Navigation.vue"
 import CFooter from "@/components/Footer.vue"
 

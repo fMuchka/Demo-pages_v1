@@ -1,6 +1,6 @@
 <template>
   <v-footer
-    color="orange lighten-1"
+    color="primary lighten-1"
     padless
   >
     <v-row
@@ -10,7 +10,7 @@
       <v-btn
         v-for="link in links"
         :key="link"
-        color="black"
+        color="secondary"
         text
         rounded
         class="my-2"
@@ -18,7 +18,7 @@
         {{ link }}
       </v-btn>
       <v-col
-        class="black lighten-2 py-4 text-center white--text"
+        class="accent lighten-2 py-4 text-center"
         cols="12"
       >
         {{ new Date().getFullYear() }} — <strong>Demo Pages v1</strong>
