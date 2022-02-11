@@ -1,38 +1,57 @@
 <template>
-  <v-app-bar app color="primary">
+  <v-app-bar 
+    app 
+    dark 
+    color="primary"
+
+    hide-on-scroll  
+  >
     <v-toolbar-title> Demo Pages v1 </v-toolbar-title>
 
     <v-spacer></v-spacer>
 
-    <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-            <v-btn 
-                icon 
-                color="secondary" 
-                @click="changeTheme"
-                v-bind="attrs"
-                v-on="on"
-            >
-                <v-icon v-if="darkTheme === false"> mdi-moon-waning-crescent </v-icon>
+    <v-switch 
+        color="secondary" 
+        class="pt-5"
+        
+        @click="toggleDarkMode"
+        :value="$vuetify.theme.dark"
+        
+        
+        append-icon="mdi-moon-waning-crescent"
+        prepend-icon="mdi-white-balance-sunny"
+    >
+    </v-switch>
 
-                <v-icon v-else> mdi-white-balance-sunny </v-icon>
-            </v-btn>
-        </template>
-      <span v-if="darkTheme === false">Dark Mode</span>
-      <span v-else>Light Mode</span>
-    </v-tooltip>
 
     <v-spacer></v-spacer>
 
-    <v-btn
-      v-for="(item, key) in links"
-      :key="key"
-      text
-      color="secondary"
-      rounded
+    <v-menu
+      transition="slide-y-transition"
+      bottom
     >
-      {{ item }}
-    </v-btn>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          color="primary"
+          dark
+          v-bind="attrs"
+          v-on="on"
+        >
+          <v-icon> mdi-menu </v-icon>
+        </v-btn>
+      </template>
+      <v-list width="10vw">
+        <v-list-item
+          v-for="link in links"
+          :key="`${link.url}-header-link`"
+          
+          href
+          :to="link.url"
+        >
+          <v-list-item-title>{{ link.label }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
   </v-app-bar>
 </template>
 
@@ -42,16 +61,13 @@ export default {
     links: Array,
   },
 
-  data: () => ({
-    darkTheme: false,
-  }),
-
   methods: {
-    changeTheme() {
-      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-      this.darkTheme = !this.darkTheme;
-    },
-  },
+      toggleDarkMode() {
+          this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+          localStorage.setItem("dark_mode", this.$vuetify.theme.dark);
+      }
+  }
+
 };
 </script>
 

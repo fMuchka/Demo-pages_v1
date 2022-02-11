@@ -1,36 +1,44 @@
 <template>
   <v-app>
-    <c-navigation :links="links"/>    
+    <c-navigation :links="links" />
 
     <v-content background="primary">
-      <c-login/>
+      <router-view></router-view>
     </v-content>
 
-    <c-footer :links="links"/>
-    
+    <c-footer :links="links" />
   </v-app>
 </template>
 
 <script>
-
-import CLogin from "@/views/Login.vue"
-import CNavigation from "@/components/Navigation.vue"
-import CFooter from "@/components/Footer.vue"
+import CNavigation from "@/components/Navigation.vue";
+import CFooter from "@/components/Footer.vue";
 
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
-    CLogin,
     CNavigation,
-    CFooter
+    CFooter,
   },
 
   data: () => ({
     links: [
-            "Home",
-            "Login"
-        ]
+      { label: "Home", url: "/" },
+      { label: "Login", url: "/login" }
+      ],
   }),
+
+  mounted() {
+    const theme = localStorage.getItem("dark_mode");
+
+    if (theme) {
+      if (theme == "true") {
+        this.$vuetify.theme.dark = true;
+      } else {
+        this.$vuetify.theme.dark = false;
+      }
+    }
+  }
 };
 </script>
