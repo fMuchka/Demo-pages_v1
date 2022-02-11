@@ -95,6 +95,7 @@
 import { gsap } from "gsap"
 
 export default {
+    name: "Home",
     data: () => ({
 
         libraries: [

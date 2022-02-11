@@ -42,6 +42,7 @@
 import { gsap } from "gsap"
 
 export default {
+    name: "Login",
     data: () => ({
         showPassword: false
     }),
