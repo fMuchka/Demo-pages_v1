@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import { MUTATIONS } from "./mutations.type.ts"
+import { MUTATIONS } from "./mutations.type"
 
 Vue.use(Vuex)
 
@@ -15,6 +15,7 @@ export default new Vuex.Store({
   mutations: {
     [MUTATIONS.STORE_API_REPORT_DATA](state, data) {
       state.apiReportData = data;
+      state.apiReportFetched = true;
     }
   },
   actions: {
@@ -22,6 +23,7 @@ export default new Vuex.Store({
   modules: {
   },
   getters: {
-    apiReportFetched: ( state ) => { return state.apiReportFetched }
+    apiReportFetched: (state) => { return state.apiReportFetched },
+    apiReportData: (state) => { return state.apiReportData }
   }
 })
