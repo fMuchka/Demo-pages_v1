@@ -1,5 +1,5 @@
 <template>
-  <v-card width="30vw" class="mx-auto mt-5">
+  <v-card id="loginCard" width="30vw" class="mx-auto mt-5">
       <v-card-title>
         <h1>Login</h1>
       </v-card-title>
@@ -38,10 +38,29 @@
 </template>
 
 <script>
+
+import { gsap } from "gsap"
+
 export default {
     data: () => ({
         showPassword: false
-    })
+    }),
+
+    mounted: function() {
+      const tl = gsap.timeline();
+
+      tl.add();
+
+      tl.fromTo("#loginCard", 
+          {y: "-120%", opacity: 0},
+          {
+            y: 0,
+            opacity: 1,
+            ease: "bounce.out",
+            duration: 1
+          }
+        )
+    }
 }
 </script>
 

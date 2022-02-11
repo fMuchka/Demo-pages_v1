@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card width="60vw" class="ma-10">
+    <v-card width="60vw" id="hello" class="ma-10">
       <v-card-title>
         <h1>Hello!</h1>
       </v-card-title>
@@ -31,7 +31,7 @@
       </v-card-text>
     </v-card>
 
-    <v-card width="50vw" class="ma-10">
+    <v-card width="50vw" id="about" class="ma-10">
       <v-card-title>
         <h1>About these pages...</h1>
       </v-card-title>
@@ -39,11 +39,11 @@
       <v-card-text class="text-md-body-1">
         I've started working on these pages while doing VueMastery course on Vuetify.
         <br>
-        At the time I was also thinking about creating some kind of playground, where I could practice various general problems. These pages are a showcase of that.
+        At the time I was also thinking about creating some kind of playground, where I could practice various solutions to general problems. These pages are a showcase of that.
       </v-card-text>
     </v-card>
 
-    <v-card width="30vw" min-width= "min-content" class="ma-10">
+    <v-card width="30vw" id="libraries" min-width= "min-content" class="ma-10">
       <v-card-title>
         <h1>Major libraries used:</h1>
       </v-card-title>
@@ -73,7 +73,7 @@
       </v-card-text>
     </v-card>
 
-    <v-card width="35vw" min-width= "fit-content" class="ma-10">
+    <v-card width="35vw" id="source" min-width= "fit-content" class="ma-10">
       <v-card-title>
         <h1>Source Code</h1>
       </v-card-title>
@@ -91,6 +91,9 @@
 </template>
 
 <script>
+
+import { gsap } from "gsap"
+
 export default {
     data: () => ({
 
@@ -99,7 +102,62 @@ export default {
             { title: "Vuetify", desc: "Material Design Framework", url: "https://vuetifyjs.com/en/" },
             { title: "GSAP", desc: "Professional-grade JavaScript animation for the modern web", url: "https://greensock.com/gsap/" },
         ]
-    })
+    }),
+
+    mounted: function(){
+      const tl = gsap.timeline();
+
+      tl.add();
+
+      tl.fromTo("#hello", 
+        {x: "-120%", opacity: 0},
+        {
+          x: 0,
+          opacity: 1,
+          ease: "power1",
+          duration: 1
+        }
+      )
+
+      tl.add();
+
+      tl.fromTo("#about", 
+        {x: "-120%", opacity: 0},
+        {
+          x: 0,
+          opacity: 1,
+          ease: "power1",
+          duration: 1
+        },
+        "-=0.25"
+      )
+
+      tl.add();
+
+      tl.fromTo("#libraries", 
+        {x: "-120%", opacity: 0},
+        {
+          x: 0,
+          opacity: 1,
+          ease: "power1",
+          duration: 1
+        },
+        "-=0.25"
+      )
+
+      tl.add();
+
+      tl.fromTo("#source", 
+        {x: "-120%", opacity: 0},
+        {
+          x: 0,
+          opacity: 1,
+          ease: "power1",
+          duration: 1
+        },
+        "-=0.25"
+      )  
+    }
 };
 
 </script>
