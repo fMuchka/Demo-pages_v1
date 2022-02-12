@@ -15,7 +15,7 @@
 
         <v-btn @click="hideError">Ok</v-btn>  
     </v-alert>
-
+    
     <v-card width="40vw" class="mx-auto mt-5">
         <v-card-title class="d-flex justify-center">
             <h1>API Report</h1>
@@ -26,7 +26,9 @@
         </v-card-text>
     </v-card>
 
+    
     <v-card 
+        id="overallTable"
         width="95vw" 
         class="mx-auto mb-5 mt-5" 
         v-if="apiReportFetched === true"
@@ -62,15 +64,48 @@
     </v-card>
     
 
-    <v-card>
-        
+    <v-card 
+        id="groupTable"
+        width="95vw" 
+        class="mx-auto mb-5 mt-5" 
+        v-if="apiReportFetched === true"
+
+        rounded
+    >
+        <v-card-title>
+            <v-text-field
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Search"
+                single-line
+                hide-details
+            ></v-text-field>
+        </v-card-title>
+
+        <v-data-table
+            :headers="headers"
+            :items="apiReportData"
+            :search="search"
+            multiSort
+            class="elevation-1"
+            group-by="director"     
+        >
+            <template v-slot:item.rt_score="{ item }">
+                <v-chip
+                    :color="getColor(item.rt_score)"
+                    dark
+                >
+                    {{ item.rt_score }}
+                </v-chip>
+            </template>
+        </v-data-table>
     </v-card>
 
   </div>
 </template>
 
 <script>
-import { MUTATIONS } from "@/store/mutations.type.ts";
+import { ACTIONS } from "@/store/actions.type.ts";
 import { mapGetters } from "vuex";
 
 import { gsap } from "gsap"
@@ -128,7 +163,19 @@ export default {
             })
             .then(response => response.json())
             .then(result => {
-                this.$store.commit(MUTATIONS.STORE_API_REPORT_DATA, result);
+                this.$store.dispatch(ACTIONS.STORE_API_REPORT_DATA, result)
+                .then(() => {                 
+
+                    gsap.fromTo("#dataTable",
+                        { opactiy: 0 },
+                        {
+                            opacity: 1,
+                            ease: "bounce.out",
+                            duration: 1
+                        }
+                    )
+                })
+                    
             })
             .catch(() => {
                 tl.add();
@@ -154,4 +201,12 @@ export default {
         opacity: 0;
         position: absolute;
     }
+
+    #dataTable{
+        opacity: 0;
+    }
+
+    .v-row-group__header  button:nth-child(2) {
+    display: none !important;
+}
 </style>
