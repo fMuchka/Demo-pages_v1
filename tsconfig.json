@@ -19,7 +19,8 @@
         "types": [
             "webpack-env",
             "vuetify",
-            "node"
+            "node",
+            "vue-aos"
         ],
         "paths": {
             "@/*": [
