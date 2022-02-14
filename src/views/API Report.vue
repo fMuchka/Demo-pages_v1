@@ -120,9 +120,10 @@
     <v-card 
         id="groupTableCard"
         width="95vw" 
-        class="ml-10 mb-5 mt-5 d-flex" 
+        class="ml-10 mb-5 mt-5 d-flex pt-5 pb-5" 
         v-if="apiReportFetched === true"
-    
+
+        color="secondary"
         rounded
     >
 
@@ -200,6 +201,115 @@
         
     </v-card>
 
+    <v-card 
+        id="byScoresTableCard"
+        width="60vw" 
+        class="mx-auto mb-5 mt-5 d-flex" 
+        v-if="apiScoreMap.directors.length > 0 && apiScoreMap.producers.length > 0"
+
+        color="secondary"
+
+        data-aos="fade-top"
+
+        rounded
+    >
+
+        <v-card
+            class="mx-auto mt-5 mb-5"
+            width="20vw"
+
+            id="directorScore"  
+
+            
+            
+        >
+            <v-card-title class="d-flex justify-center">
+                <h1>Average Score by Director</h1>
+            </v-card-title>
+        
+
+            <v-list shaped >
+                <v-list-item 
+                    v-for="item in scoreSortedDirectors"
+                    :key="`${item.person}-director`"
+                    two-line
+                >
+                    <v-list-item-content class="ml-5">
+                        <v-list-item-title class="d-flex align-center justify-space-between"> 
+
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <div 
+                                        class="scorePerson"
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    >
+                                        {{ item.person }}
+                                    </div>
+                                </template>
+                                <span>{{ item.person }}</span>
+                            </v-tooltip>
+                            
+
+                            <v-chip :color="getColor(item.avgScore)" class="d-flex justify-center">
+                            {{ Math.round(item.avgScore, 2) }}
+                            </v-chip>
+                        </v-list-item-title>
+
+                        <v-list-item-subtitle> Based on {{ item.sampleSize }} movies</v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-list-item>             
+            </v-list>
+        </v-card>
+        
+        
+        <v-card
+            class="mx-auto mt-5 mb-5"
+            width="20vw"
+
+            id="producerScore"
+        >
+            <v-card-title class="d-flex justify-center">
+                <h1>Average Score by Producer</h1>
+            </v-card-title>
+
+            <v-list shaped >
+                <v-list-item 
+                    v-for="item in scoreSortedProducers"
+                    :key="`${item.person}-producer`"
+                    two-line
+                >
+                    <v-list-item-content class="ml-5">
+                        <v-list-item-title class="d-flex align-center justify-space-between"> 
+
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <div 
+                                        class="scorePerson"
+                                        v-bind="attrs"
+                                        v-on="on"
+                                    >
+                                        {{ item.person }}
+                                    </div>
+                                </template>
+                                <span> 
+                                    {{ item.person }}
+                                </span>
+                            </v-tooltip>
+
+                            <v-chip :color="getColor(item.avgScore)" class="d-flex justify-center">
+                            {{ Math.round(item.avgScore, 2) }}
+                            </v-chip>
+                        </v-list-item-title>
+
+                        <v-list-item-subtitle> Based on {{ item.sampleSize }} movies</v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-list-item>             
+            </v-list>
+        </v-card>
+        
+    </v-card>
+
   </div>
 </template>
 
@@ -230,9 +340,25 @@ export default {
         ...mapGetters([
             "apiReportFetched", 
             "apiReportData", 
-            "apiReportGroupedData"
-            
-            ])
+            "apiReportGroupedData",
+            "apiScoreMap"
+            ]),
+
+        scoreSortedDirectors(){
+            let sorted = JSON.parse(JSON.stringify(this.apiScoreMap.directors));
+
+            sorted.sort((a, b) => -1* (a.avgScore - b.avgScore));
+
+            return sorted;
+        },
+
+        scoreSortedProducers(){
+            let sorted = JSON.parse(JSON.stringify(this.apiScoreMap.producers));
+
+            sorted.sort((a, b) => -1* (a.avgScore - b.avgScore));
+
+            return sorted;
+        }
     },
 
     methods: {
@@ -315,4 +441,10 @@ export default {
         position: absolute;
     }
 
+    .scorePerson{
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 10vw;
+    }
 </style>

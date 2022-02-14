@@ -14,6 +14,9 @@
 import CNavigation from "@/components/Navigation.vue";
 import CFooter from "@/components/Footer.vue";
 
+import AOS from "aos"
+import "aos/dist/aos.css"
+
 export default {
   name: "App",
 
@@ -31,6 +34,8 @@ export default {
   }),
 
   mounted() {
+    AOS.init();
+
     const theme = localStorage.getItem("dark_mode");
 
     if (theme) {

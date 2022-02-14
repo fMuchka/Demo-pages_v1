@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+
 import { MUTATIONS } from "./mutations.type"
 import { ACTIONS } from "./actions.type"
+import { PersonScore } from '@/interfaces/PersonScore';
 
 Vue.use(Vuex)
 
@@ -14,7 +16,13 @@ export default new Vuex.Store({
     apiReportData: null,
 
     apiGroupedData: {
+      directors: new Map<string, []>(),
+      producers: new Map<string, []>()
+    },
 
+    apiScoreMap: {
+      directors: [],
+      producers: []
     }
   },
   mutations: {
@@ -27,6 +35,14 @@ export default new Vuex.Store({
 
     [MUTATIONS.UPDATE_GROUPED_API_DATA](state, data) {
       state.apiGroupedData = data
+    },
+
+    [MUTATIONS.UPDATE_API_SCORE_MAP_DIRECTORS](state, data) {
+      state.apiScoreMap.directors = data;
+    },
+
+    [MUTATIONS.UPDATE_API_SCORE_MAP_PRODUCERS](state, data) {
+      state.apiScoreMap.producers = data;
     }
   },
   actions: {
@@ -34,7 +50,12 @@ export default new Vuex.Store({
       commit(MUTATIONS.UPDATE_API_REPORT_DATA, data);
       commit(MUTATIONS.UPDATE_API_REPORT_FETCH_STATUS, true);
          
-      dispatch(ACTIONS.STORE_FILTERED_API_DATA, data);
+      dispatch(ACTIONS.STORE_FILTERED_API_DATA, data)
+        .then(() => {
+          dispatch(ACTIONS.CALCULATE_AVG_SCORE_BY_DIRECTOR);
+          dispatch(ACTIONS.CALCULATE_AVG_SCORE_BY_PRODUCER); 
+        })
+        
     },
 
 
@@ -61,12 +82,58 @@ export default new Vuex.Store({
 
       commit(MUTATIONS.UPDATE_GROUPED_API_DATA, groupedData)
     },
+
+    [ACTIONS.CALCULATE_AVG_SCORE_BY_DIRECTOR]( {commit} ) {
+      const directors : Map<string, []> = this.state.apiGroupedData.directors;
+
+      const scoreArr : PersonScore[] = [];
+
+      directors.forEach((value, key) => {
+        const scoreSum = value.reduce(function (previousValue: number, currentValue: any) {     
+              return previousValue + parseInt(currentValue.rt_score)
+            }, 0
+        );
+
+        const moviesN = value.length;
+        const scoreAvg = scoreSum / moviesN;
+
+        const score = { person: key, avgScore: scoreAvg, sampleSize: moviesN };
+
+        scoreArr.push(score);
+      });
+
+      commit(MUTATIONS.UPDATE_API_SCORE_MAP_DIRECTORS, scoreArr)
+    },
+
+    [ACTIONS.CALCULATE_AVG_SCORE_BY_PRODUCER]( {commit} ) {
+      const producers : Map<string, []> = this.state.apiGroupedData.producers;
+
+      const scoreArr : PersonScore[] = [];
+
+      producers.forEach((value, key) => {
+        const scoreSum = value.reduce(function (previousValue: number, currentValue: any) {       
+              return previousValue + parseInt(currentValue.rt_score)
+            }, 0
+        );
+
+        const moviesN = value.length;
+        const scoreAvg = scoreSum / moviesN;
+        
+        const score = { person: key, avgScore: scoreAvg, sampleSize: moviesN };
+
+        scoreArr.push(score);
+      });
+      
+
+      commit(MUTATIONS.UPDATE_API_SCORE_MAP_PRODUCERS, scoreArr)
+    }
   },
   modules: {
   },
   getters: {
     apiReportFetched: (state) => { return state.apiReportFetched },
     apiReportData: (state) => { return state.apiReportData },
-    apiReportGroupedData: (state) => { return state.apiGroupedData }
+    apiReportGroupedData: (state) => { return state.apiGroupedData },
+    apiScoreMap: (state) => { return state.apiScoreMap }
   }
 })
