@@ -102,7 +102,7 @@ export default {
             { title: "Vue.js (2.x.x)", desc: "The Progressive JavaScript Framework", url: "https://vuejs.org/" },
             { title: "Vuetify", desc: "Material Design Framework", url: "https://vuetifyjs.com/en/" },
             { title: "GSAP", desc: "Professional-grade JavaScript animation for the modern web", url: "https://greensock.com/gsap/" },
-            { title: "TypeScript", desc: "JavaScript with syntax for types", url: "https://www.typescriptlang.org/" }
+            //{ title: "TypeScript", desc: "JavaScript with syntax for types", url: "https://www.typescriptlang.org/" } DISABLED DUE TO LACKING COMPABILITY WITH VUETIFY; VUETIFY 3 SOON 
         ]
     }),
 

@@ -203,7 +203,7 @@
 
     <v-card 
         id="byScoresTableCard"
-        width="60vw" 
+        width="75vw" 
         class="mx-auto mb-5 mt-5 d-flex" 
         v-if="apiScoreMap.directors.length > 0 && apiScoreMap.producers.length > 0"
 
@@ -216,7 +216,7 @@
 
         <v-card
             class="mx-auto mt-5 mb-5"
-            width="20vw"
+            width="35vw"
 
             id="directorScore"  
 
@@ -265,7 +265,7 @@
         
         <v-card
             class="mx-auto mt-5 mb-5"
-            width="20vw"
+            width="35vw"
 
             id="producerScore"
         >
@@ -314,7 +314,7 @@
 </template>
 
 <script>
-import { ACTIONS } from "@/store/actions.type.ts";
+import ACTIONS from "@/store/actions.type";
 import { mapGetters } from "vuex";
 
 import { gsap } from "gsap"
@@ -445,6 +445,6 @@ export default {
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
-        width: 10vw;
+        width: 15vw;
     }
 </style>

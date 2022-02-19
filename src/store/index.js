@@ -2,9 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 
-import { MUTATIONS } from "./mutations.type"
-import { ACTIONS } from "./actions.type"
-import { PersonScore } from '@/interfaces/PersonScore';
+import MUTATIONS from "./mutations.type"
+import ACTIONS from "./actions.type"
 
 Vue.use(Vuex)
 
@@ -16,8 +15,8 @@ export default new Vuex.Store({
     apiReportData: null,
 
     apiGroupedData: {
-      directors: new Map<string, []>(),
-      producers: new Map<string, []>()
+      directors: new Map(),
+      producers: new Map()
     },
 
     apiScoreMap: {
@@ -59,9 +58,9 @@ export default new Vuex.Store({
     },
 
 
-    [ACTIONS.STORE_FILTERED_API_DATA]({ commit }, data: []) {
+    [ACTIONS.STORE_FILTERED_API_DATA]({ commit }, data) {
 
-      function groupBy(list : [], keyGetter: any) {
+      function groupBy(list, keyGetter) {
         const map = new Map();
         list.forEach((item) => {
             const key = keyGetter(item);
@@ -76,20 +75,20 @@ export default new Vuex.Store({
       }
       
       const groupedData = {
-        producers: groupBy(data, (item: { producer: any }) => item.producer),
-        directors: groupBy(data, (item: { director: any }) => item.director)
+        producers: groupBy(data, item => item.producer),
+        directors: groupBy(data, item => item.director)
       }
 
       commit(MUTATIONS.UPDATE_GROUPED_API_DATA, groupedData)
     },
 
     [ACTIONS.CALCULATE_AVG_SCORE_BY_DIRECTOR]( {commit} ) {
-      const directors : Map<string, []> = this.state.apiGroupedData.directors;
+      const directors  = this.state.apiGroupedData.directors;
 
-      const scoreArr : PersonScore[] = [];
+      const scoreArr = [];
 
       directors.forEach((value, key) => {
-        const scoreSum = value.reduce(function (previousValue: number, currentValue: any) {     
+        const scoreSum = value.reduce(function (previousValue, currentValue) {     
               return previousValue + parseInt(currentValue.rt_score)
             }, 0
         );
@@ -106,12 +105,12 @@ export default new Vuex.Store({
     },
 
     [ACTIONS.CALCULATE_AVG_SCORE_BY_PRODUCER]( {commit} ) {
-      const producers : Map<string, []> = this.state.apiGroupedData.producers;
+      const producers = this.state.apiGroupedData.producers;
 
-      const scoreArr : PersonScore[] = [];
+      const scoreArr = [];
 
       producers.forEach((value, key) => {
-        const scoreSum = value.reduce(function (previousValue: number, currentValue: any) {       
+        const scoreSum = value.reduce(function (previousValue, currentValue) {       
               return previousValue + parseInt(currentValue.rt_score)
             }, 0
         );
