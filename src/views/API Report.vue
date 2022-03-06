@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
 
     <v-alert
         prominent
@@ -16,6 +16,7 @@
         <v-btn @click="hideError">Ok</v-btn>  
     </v-alert>
 
+    <!-- Loader -->
     <v-overlay :value="showOverlay">
       <v-progress-circular
         indeterminate
@@ -23,294 +24,296 @@
       ></v-progress-circular>
     </v-overlay>
     
-    <v-card width="40vw" class="mx-auto mt-5">
-        <v-card-title class="d-flex justify-center">
-            <h1>API Report</h1>
-        </v-card-title>
+    <!-- Intro -->
+    <v-row>
+        <v-col cols="12">
+            <v-card class="mx-auto mt-5">
+                <v-card-title class="d-flex justify-center">
+                    <h1>API Report</h1>
+                </v-card-title>
 
-        <v-card-text class="text-md-body-1 d-flex justify-center">
-            This page reports data fetched via Studio Ghibli's Movies API.
-        </v-card-text>
-    </v-card>
-
-    <v-card
-        width="430px"
-        class="mx-auto mt-5"
-        v-if="apiReportFetched === true"
-    >
-        <v-card-title>
-            <h3>Rotten Tomatoes Score color coding:</h3>
-        </v-card-title>
-
-        <v-card-text class="text-md-body-1 d-flex justify-center">
-            <v-list shaped >
-                <v-list-item single-line>
-                    <v-list-item-content class="ml-5">
-                        <v-list-item-title> 
-                            <v-chip color="green" class="d-flex justify-center">
-                            85 - 100
-                            </v-chip>
-                        </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-
-                <v-list-item single-line>
-                    <v-list-item-content class="ml-5">
-                        <v-list-item-title> 
-                            <v-chip color="orange" class="d-flex justify-center">
-                            60 - 84
-                            </v-chip>
-                        </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-
-                <v-list-item single-line>
-                    <v-list-item-content class="ml-5">
-                        <v-list-item-title> 
-                            <v-chip color="red" class="d-flex justify-center">
-                            0 - 59
-                            </v-chip>
-                        </v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-            </v-list>
-        </v-card-text>
-    </v-card>
-
+                <v-card-text class="text-md-body-1 d-flex justify-center">
+                    This page reports data fetched via Studio Ghibli's Movies API.
+                </v-card-text>
+            </v-card>
+        </v-col>   
+    </v-row>
     
-    <v-card 
-        id="overallTableCard"
-        width="95vw" 
-        class="mx-auto mb-5 mt-5" 
-        v-if="apiReportFetched === true"
-
-        rounded
-    >
-        <v-card-title>
-            <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Search"
-                single-line
-                hide-details
-            ></v-text-field>
-        </v-card-title>
-
-        <v-data-table
-            :headers="headers"
-            :items="apiReportData"
-            :search="search"
-            multiSort
-            hide-default-footer
-            disable-pagination
-
-            class="elevation-1"
-        >
-            <template v-slot:item.rt_score="{ item }">
-                <v-chip
-                    :color="getColor(item.rt_score)"
-                    dark
-                >
-                    {{ item.rt_score }}
-                </v-chip>
-            </template>
-        </v-data-table>
-    </v-card>
-    
-    <v-card 
-        id="groupTableCard"
-        width="95vw" 
-        class="ml-10 mb-5 mt-5 d-flex pt-5 pb-5" 
-        v-if="apiReportFetched === true"
-
-        color="secondary"
-        rounded
-    >
-
-        <v-card
-            class="mx-auto"
-            width="40vw"
-
-            id="groupDirector"  
-
-            data-aos="fade-right"
-            
-        >
-            <v-card-title class="d-flex justify-center">
-                <h1>Grouped by Directors</h1>
-            </v-card-title>
-        
-
-            <v-data-table
-                :headers="headers"
-                :items="apiReportData"
-                :search="search"
-                multiSort
-                class="elevation-1"
-
-                hide-default-footer
-                disable-pagination
-
-                group-by="director"     
+    <!-- RT Scores -->
+    <v-row>
+        <v-col cols="12">
+            <v-card
+                class="mx-auto mt-5"
+                v-if="apiReportFetched === true"
             >
-                <template v-slot:item.rt_score="{ item }">
-                    <v-chip
-                        :color="getColor(item.rt_score)"
-                        dark
-                    >
-                        {{ item.rt_score }}
-                    </v-chip>
-                </template>
-            </v-data-table>
-        </v-card>
-        
-        
-        <v-card
-            class="mx-auto"
-            width="40vw"
+                <v-card-title>
+                    <h3>Rotten Tomatoes Score color coding:</h3>
+                </v-card-title>
 
-            id="groupProducer"
-
-            data-aos="fade-left"
-        >
-            <v-card-title class="d-flex justify-center">
-                <h1>Grouped by Producers</h1>
-            </v-card-title>
-
-            <v-data-table
-                :headers="headers"
-                :items="apiReportData"
-                :search="search"
-                multiSort
-                class="elevation-1"
-                group-by="producer" 
-
-                hide-default-footer
-                disable-pagination    
-            >
-                <template v-slot:item.rt_score="{ item }">
-                    <v-chip
-                        :color="getColor(item.rt_score)"
-                        dark
-                    >
-                        {{ item.rt_score }}
-                    </v-chip>
-                </template>
-            </v-data-table>
-        </v-card>
-        
-    </v-card>
-
-    <v-card 
-        id="byScoresTableCard"
-        width="60vw" 
-        class="mx-auto mb-5 mt-5 d-flex" 
-        v-if="apiScoreMap.directors.length > 0 && apiScoreMap.producers.length > 0"
-
-        color="secondary"
-
-        data-aos="fade-top"
-
-        rounded
-    >
-
-        <v-card
-            class="mx-auto mt-5 mb-5"
-            width="20vw"
-
-            id="directorScore"  
-
-            
-            
-        >
-            <v-card-title class="d-flex justify-center">
-                <h1>Average Score by Director</h1>
-            </v-card-title>
-        
-
-            <v-list shaped >
-                <v-list-item 
-                    v-for="item in scoreSortedDirectors"
-                    :key="`${item.person}-director`"
-                    two-line
-                >
-                    <v-list-item-content class="ml-5">
-                        <v-list-item-title class="d-flex align-center justify-space-between"> 
-
-                            <v-tooltip top>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <div 
-                                        class="scorePerson"
-                                        v-bind="attrs"
-                                        v-on="on"
-                                    >
-                                        {{ item.person }}
-                                    </div>
-                                </template>
-                                <span>{{ item.person }}</span>
-                            </v-tooltip>
+                <v-card-text class="text-md-body-1 d-flex justify-center">
+                    <v-row>
+                            <v-col cols="4">                  
+                                <v-chip color="red" class="d-flex justify-center">
+                                    0 - 59
+                                </v-chip> 
+                            </v-col>
                             
+                            <v-col cols="4">                           
+                                <v-chip color="orange" class="d-flex justify-center">
+                                    60 - 84
+                                </v-chip>                                     
+                            </v-col>
+                                
+                            <v-col cols="4">
+                                <v-chip color="green" class="d-flex justify-center">
+                                    85 - 100
+                                </v-chip>   
+                            </v-col>              
+                    </v-row>                 
+                </v-card-text>
+            </v-card>
+        </v-col>  
+    </v-row>
+    
+    <!-- Overview -->
+    <v-row>
+        <v-col cols="12">
+            <v-card 
+                id="overallTableCard"
+                width="95vw" 
+                class="mx-auto mb-5 mt-5" 
+                v-if="apiReportFetched === true"
 
-                            <v-chip :color="getColor(item.avgScore)" class="d-flex justify-center">
-                            {{ Math.round(item.avgScore, 2) }}
-                            </v-chip>
-                        </v-list-item-title>
+                rounded
+            >
+                <v-card-title>
+                    <v-text-field
+                        v-model="search"
+                        append-icon="mdi-magnify"
+                        label="Search"
+                        single-line
+                        hide-details
+                    ></v-text-field>
+                </v-card-title>
 
-                        <v-list-item-subtitle> Based on {{ item.sampleSize }} movies</v-list-item-subtitle>
-                    </v-list-item-content>
-                </v-list-item>             
-            </v-list>
-        </v-card>
-        
-        
-        <v-card
-            class="mx-auto mt-5 mb-5"
-            width="20vw"
+                <v-data-table
+                    :headers="headers"
+                    :items="apiReportData"
+                    :search="search"
+                    multiSort
+                    hide-default-footer
+                    disable-pagination
 
-            id="producerScore"
-        >
-            <v-card-title class="d-flex justify-center">
-                <h1>Average Score by Producer</h1>
-            </v-card-title>
-
-            <v-list shaped >
-                <v-list-item 
-                    v-for="item in scoreSortedProducers"
-                    :key="`${item.person}-producer`"
-                    two-line
+                    class="elevation-1"
                 >
-                    <v-list-item-content class="ml-5">
-                        <v-list-item-title class="d-flex align-center justify-space-between"> 
+                    <template v-slot:item.rt_score="{ item }">
+                        <v-chip
+                            :color="getColor(item.rt_score)"
+                            dark
+                        >
+                            {{ item.rt_score }}
+                        </v-chip>
+                    </template>
+                </v-data-table>
+            </v-card>
+        </v-col>    
+    </v-row>
+    
+    <!-- Groups -->
+    <v-row>
+       <v-card 
+            id="groupTableCard"
+            class="mb-5 mt-5 d-flex" 
+            v-if="apiReportFetched === true"
 
-                            <v-tooltip top>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <div 
-                                        class="scorePerson"
-                                        v-bind="attrs"
-                                        v-on="on"
-                                    >
-                                        {{ item.person }}
-                                    </div>
-                                </template>
-                                <span> 
-                                    {{ item.person }}
-                                </span>
-                            </v-tooltip>
+            color="secondary"
+            rounded
+        >
+            <v-col cols="6">
+                <v-card
+                    class="mx-auto"
+                    id="groupDirector"  
 
-                            <v-chip :color="getColor(item.avgScore)" class="d-flex justify-center">
-                            {{ Math.round(item.avgScore, 2) }}
+                    data-aos="fade-right"
+                    
+                >
+                    <v-card-title class="d-flex justify-center">
+                        <h1>Grouped by Directors</h1>
+                    </v-card-title>
+                
+
+                    <v-data-table
+                        :headers="headers"
+                        :items="apiReportData"
+                        :search="search"
+                        multiSort
+                        class="elevation-1"
+
+                        hide-default-footer
+                        disable-pagination
+
+                        group-by="director"     
+                    >
+                        <template v-slot:item.rt_score="{ item }">
+                            <v-chip
+                                :color="getColor(item.rt_score)"
+                                dark
+                            >
+                                {{ item.rt_score }}
                             </v-chip>
-                        </v-list-item-title>
+                        </template>
+                    </v-data-table>
+                </v-card>       
+            </v-col>
+            
+            <v-spacer></v-spacer>
 
-                        <v-list-item-subtitle> Based on {{ item.sampleSize }} movies</v-list-item-subtitle>
-                    </v-list-item-content>
-                </v-list-item>             
-            </v-list>
+            <v-col cols="6">
+                <v-card
+                    class="mx-auto"
+                    id="groupProducer"
+
+                    data-aos="fade-left"
+                >
+                    <v-card-title class="d-flex justify-center">
+                        <h1>Grouped by Producers</h1>
+                    </v-card-title>
+
+                    <v-data-table
+                        :headers="headers"
+                        :items="apiReportData"
+                        :search="search"
+                        multiSort
+                        class="elevation-1"
+                        group-by="producer" 
+
+                        hide-default-footer
+                        disable-pagination    
+                    >
+                        <template v-slot:item.rt_score="{ item }">
+                            <v-chip
+                                :color="getColor(item.rt_score)"
+                                dark
+                            >
+                                {{ item.rt_score }}
+                            </v-chip>
+                        </template>
+                    </v-data-table>
+                </v-card>
+            </v-col>
+            
+            
         </v-card>
-        
-    </v-card>
+    </v-row>
+    
+    <!-- Avg scores -->
+    <v-row>
+        <v-card 
+            id="byScoresTableCard"
+            class="mx-auto mb-5 mt-5 d-flex" 
+            v-if="apiScoreMap.directors.length > 0 && apiScoreMap.producers.length > 0"
 
-  </div>
+            color="secondary"
+
+            data-aos="fade-top"
+
+            rounded
+        >
+            <v-col cols="6">
+                <v-card
+                    class="mx-auto"
+                    id="directorScore"           
+                >
+                    <v-card-title class="d-flex justify-center">
+                        <h1>Average Score by Director</h1>
+                    </v-card-title>
+                
+
+                    <v-list shaped >
+                        <v-list-item 
+                            v-for="item in scoreSortedDirectors"
+                            :key="`${item.person}-director`"
+                            two-line
+                        >
+                            <v-list-item-content>
+                                <v-list-item-title class="d-flex align-center justify-space-between"> 
+
+                                    <v-tooltip top>
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <div 
+                                                class="scorePerson"
+                                                v-bind="attrs"
+                                                v-on="on"
+                                            >
+                                                {{ item.person }}
+                                            </div>
+                                        </template>
+                                        <span>{{ item.person }}</span>
+                                    </v-tooltip>
+                                    
+
+                                    <v-chip :color="getColor(item.avgScore)" class="d-flex justify-center">
+                                    {{ Math.round(item.avgScore, 2) }}
+                                    </v-chip>
+                                </v-list-item-title>
+
+                                <v-list-item-subtitle> Based on {{ item.sampleSize }} movies</v-list-item-subtitle>
+                            </v-list-item-content>
+                        </v-list-item>             
+                    </v-list>
+                </v-card>
+            </v-col>
+            
+            
+            <v-col cols="6">
+                <v-card
+                    class="mx-auto"
+                    id="producerScore"
+                >
+                    <v-card-title class="d-flex justify-center">
+                        <h1 style="white-space: nowrap">Average Score by Producer</h1>
+                    </v-card-title>
+
+                    <v-list shaped >
+                        <v-list-item 
+                            v-for="item in scoreSortedProducers"
+                            :key="`${item.person}-producer`"
+                            two-line
+                        >
+                            <v-list-item-content>
+                                <v-list-item-title class="d-flex align-center justify-space-between"> 
+
+                                    <v-tooltip top>
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <div 
+                                                class="scorePerson"
+                                                v-bind="attrs"
+                                                v-on="on"
+                                            >
+                                                {{ item.person }}
+                                            </div>
+                                        </template>
+                                        <span> 
+                                            {{ item.person }}
+                                        </span>
+                                    </v-tooltip>
+
+                                    <v-chip :color="getColor(item.avgScore)" class="d-flex justify-center">
+                                    {{ Math.round(item.avgScore, 2) }}
+                                    </v-chip>
+                                </v-list-item-title>
+
+                                <v-list-item-subtitle> Based on {{ item.sampleSize }} movies</v-list-item-subtitle>
+                            </v-list-item-content>
+                        </v-list-item>             
+                    </v-list>
+                </v-card>
+            </v-col>          
+        </v-card>
+    </v-row>
+    
+
+  </v-container>
 </template>
 
 <script>
