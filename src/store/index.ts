@@ -23,7 +23,9 @@ export default new Vuex.Store({
     apiScoreMap: {
       directors: [],
       producers: []
-    }
+    },
+
+    avgInTime: new Map()
   },
   mutations: {
     [MUTATIONS.UPDATE_API_REPORT_DATA](state, data) {
@@ -43,6 +45,10 @@ export default new Vuex.Store({
 
     [MUTATIONS.UPDATE_API_SCORE_MAP_PRODUCERS](state, data) {
       state.apiScoreMap.producers = data;
+    },
+
+    [MUTATIONS.UPDATE_API_AVG_IN_TIME](state, data) {
+      state.avgInTime = data;
     }
   },
   actions: {
@@ -55,6 +61,8 @@ export default new Vuex.Store({
           dispatch(ACTIONS.CALCULATE_AVG_SCORE_BY_DIRECTOR);
           dispatch(ACTIONS.CALCULATE_AVG_SCORE_BY_PRODUCER); 
         })
+      
+      dispatch(ACTIONS.STORE_SCORE_IN_TIME);
         
     },
 
@@ -124,8 +132,37 @@ export default new Vuex.Store({
         scoreArr.push(score);
       });
       
-
       commit(MUTATIONS.UPDATE_API_SCORE_MAP_PRODUCERS, scoreArr)
+    },
+
+    [ACTIONS.STORE_SCORE_IN_TIME]({ commit }) {
+      const movies = this.state.apiReportData;
+      const scoreInTime = new Map(); 
+
+      for (let i = 0; i < movies.length; i++) {
+        const m = movies[i];
+        
+        if (scoreInTime.has(m.release_date)) {
+          scoreInTime.get(m.release_date).scores.push(parseInt(m.rt_score)); 
+        }
+        else {
+          scoreInTime.set(m.release_date, {scores: [parseInt(m.rt_score)], avg: 0})
+        }
+      }
+
+      scoreInTime.forEach(e => {
+        // check n of movies in each year
+        if (e.scores.length > 1) {
+          e.avg = e.scores.reduce(function (previousValue: number, currentValue: any) {
+            return previousValue + currentValue
+          }, 0) / e.scores.length
+        }
+        else {
+          e.avg = e.scores[0]
+        }
+      })
+      
+      commit(MUTATIONS.UPDATE_API_AVG_IN_TIME, scoreInTime);
     }
   },
   modules: {
@@ -134,6 +171,7 @@ export default new Vuex.Store({
     apiReportFetched: (state) => { return state.apiReportFetched },
     apiReportData: (state) => { return state.apiReportData },
     apiReportGroupedData: (state) => { return state.apiGroupedData },
-    apiScoreMap: (state) => { return state.apiScoreMap }
+    apiScoreMap: (state) => { return state.apiScoreMap },
+    avgScoreInTime: (state) => { return state.avgInTime }
   }
 })

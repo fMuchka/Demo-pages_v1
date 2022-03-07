@@ -5,4 +5,6 @@ export enum MUTATIONS {
 
     UPDATE_API_SCORE_MAP_PRODUCERS = "updateApiScoreMapProducers",
     UPDATE_API_SCORE_MAP_DIRECTORS = "updateApiScoreMapDirectors",
+
+    UPDATE_API_AVG_IN_TIME = "updateApiAvgInTime",
 }

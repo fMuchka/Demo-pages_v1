@@ -5,9 +5,10 @@
         prominent
         outlined
         type="error"
-        class="mx-auto mt-5 d-flex align-center text-md-body-1"
+        class="mt-5 d-flex align-center text-md-body-1"
 
         width="fit-content"
+        style="z-index: 2"
 
         id="errorMessage"
     >
@@ -33,7 +34,7 @@
                 </v-card-title>
 
                 <v-card-text class="text-md-body-1 d-flex justify-center">
-                    This page reports data fetched via Studio Ghibli's Movies API.
+                    This page reports data fetched via &nbsp; <a href="https://ghiblicollection.com/" target="_blank">Studio Ghibli's</a> &nbsp; Movies API.
                 </v-card-text>
             </v-card>
         </v-col>   
@@ -80,7 +81,6 @@
         <v-col cols="12">
             <v-card 
                 id="overallTableCard"
-                width="95vw" 
                 class="mx-auto mb-5 mt-5" 
                 v-if="apiReportFetched === true"
 
@@ -117,6 +117,38 @@
                 </v-data-table>
             </v-card>
         </v-col>    
+    </v-row>
+
+    <!-- Avg scores in Time -->
+    <v-row>
+        <v-card
+            class="mx-auto text-center mb-5"
+            width="100vw"
+
+            data-aos="fade"
+        >
+            <v-card-title>
+                <h1>Average Scores in Time</h1>
+            </v-card-title>
+
+            <v-col cols="12">
+                <v-sparkline
+                    :value="avgScoreArray"
+                    :labels="avgScoreArrayYears"
+                    auto-draw
+                    padding="24"
+                    stroke-linecap="round"
+                    line-width="2"   
+                    height="100"
+                    label-size="5"
+                    smooth
+                >
+                    <template v-slot:label="item">
+                        {{ item.value }}
+                    </template>
+                </v-sparkline>
+            </v-col>  
+        </v-card>
     </v-row>
     
     <!-- Groups -->
@@ -344,7 +376,8 @@ export default {
             "apiReportFetched", 
             "apiReportData", 
             "apiReportGroupedData",
-            "apiScoreMap"
+            "apiScoreMap",
+            "avgScoreInTime"
             ]),
 
         scoreSortedDirectors(){
@@ -361,6 +394,14 @@ export default {
             sorted.sort((a, b) => -1* (a.avgScore - b.avgScore));
 
             return sorted;
+        },
+        
+        avgScoreArray(){
+            return Array.from(this.avgScoreInTime.values(), value => value.avg)
+        },
+
+        avgScoreArrayYears(){
+            return Array.from(this.avgScoreInTime.keys())
         }
     },
 
